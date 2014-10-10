@@ -24,6 +24,10 @@ namespace SandboxXnaShaders
 
         Matrix world, view, projection;
         Vector3 cameraPosition;
+        Vector3 lookAt;
+        float angle = 0;
+
+        Vector3 viewVector;
 
         #endregion Fields
 
@@ -50,7 +54,7 @@ namespace SandboxXnaShaders
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             model = Content.Load<Model>("Models/Object");
-            effect = Content.Load<Effect>("Effects/Diffuse");
+            effect = Content.Load<Effect>("Effects/Specular");
 
             CreateWorld();
         }
@@ -59,11 +63,11 @@ namespace SandboxXnaShaders
         {
             world = Matrix.Identity;
 
-            cameraPosition = new Vector3(3, 3, 10);
-            Vector3 lookAt = Vector3.Zero;
+            cameraPosition = new Vector3(3, 5, 10);
+            lookAt = Vector3.Zero;
             view = Matrix.CreateLookAt(cameraPosition, lookAt, Vector3.Up);
 
-            projection = Matrix.CreatePerspectiveFieldOfView((float)Math.PI / 4, GraphicsDevice.Viewport.AspectRatio, 1, 1000);
+            projection = Matrix.CreatePerspectiveFieldOfView((float)Math.PI / 4, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
         }
 
         #endregion Initialization
@@ -83,6 +87,14 @@ namespace SandboxXnaShaders
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
+            angle += 0.01f;
+
+            cameraPosition = 10 * new Vector3((float)Math.Sin(angle), 0.5f, (float)Math.Cos(angle));
+            view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
+
+            viewVector = lookAt - cameraPosition;
+            viewVector.Normalize();
 
             base.Update(gameTime);
         }
@@ -123,6 +135,7 @@ namespace SandboxXnaShaders
                     effect.Parameters["World"].SetValue(world * mesh.ParentBone.Transform);
                     effect.Parameters["View"].SetValue(view);
                     effect.Parameters["Projection"].SetValue(projection);
+                    effect.Parameters["ViewVector"].SetValue(viewVector);
 
                     Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);

@@ -2,3 +2,6 @@ Content\Models\Object.xnb
 Content\Models\model_diff_0.xnb
 Content\Effects\Ambient.xnb
 Content\Effects\Diffuse.xnb
+Content\Effects\Specular.xnb
+Content\Models\Helicopter.xnb
+Content\Models\HelicopterTexture_0.xnb
