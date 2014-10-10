@@ -13,14 +13,21 @@ namespace SandboxXnaShaders
 {
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+
+        #region Fields
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
         Model model;
+        Effect effect;
 
         Matrix world, view, projection;
         Vector3 cameraPosition;
-        Matrix[] boneTransforms;
+
+        #endregion Fields
+
+        #region Initialization
 
         public Game1()
         {
@@ -41,10 +48,8 @@ namespace SandboxXnaShaders
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            model = Content.Load<Model>("Object");
-
-            boneTransforms = new Matrix[model.Bones.Count];
-            model.CopyAbsoluteBoneTransformsTo(boneTransforms);
+            model = Content.Load<Model>("Models/Object");
+            effect = Content.Load<Effect>("Effects/Ambient");
 
             CreateWorld();
         }
@@ -53,16 +58,24 @@ namespace SandboxXnaShaders
         {
             world = Matrix.Identity;
 
-            cameraPosition = new Vector3(0, 0, 20);
+            cameraPosition = new Vector3(3, 3, 10);
             Vector3 lookAt = Vector3.Zero;
             view = Matrix.CreateLookAt(cameraPosition, lookAt, Vector3.Up);
 
             projection = Matrix.CreatePerspectiveFieldOfView((float)Math.PI / 4, GraphicsDevice.Viewport.AspectRatio, 1, 1000);
         }
 
+        #endregion Initialization
+
+        #region Dispose
+
         protected override void UnloadContent()
         {
         }
+
+        #endregion Dispose
+
+        #region Loop
 
         protected override void Update(GameTime gameTime)
         {
@@ -77,20 +90,43 @@ namespace SandboxXnaShaders
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            //DrawModel(model, world, view, projection);
+            DrawModelWithEffect(model, world, view, projection);
+
+            base.Draw(gameTime);
+        }
+
+        private void DrawModel(Model model, Matrix world, Matrix view, Matrix projection)
+        {
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = boneTransforms[mesh.ParentBone.Index];
+                    effect.PreferPerPixelLighting = true;
+                    effect.World = world * mesh.ParentBone.Transform;
                     effect.View = view;
                     effect.Projection = projection;
                 }
-
                 mesh.Draw();
             }
-
-            base.Draw(gameTime);
         }
+
+        private void DrawModelWithEffect(Model model, Matrix world, Matrix view, Matrix projection)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (ModelMeshPart part in mesh.MeshParts)
+                {
+                    part.Effect = effect;
+                    effect.Parameters["World"].SetValue(world * mesh.ParentBone.Transform);
+                    effect.Parameters["View"].SetValue(view);
+                    effect.Parameters["Projection"].SetValue(projection);
+                }
+                mesh.Draw();
+            }
+        }
+
+        #endregion Loop
     }
 }
