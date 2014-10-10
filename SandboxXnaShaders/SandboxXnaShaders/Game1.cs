@@ -36,6 +36,7 @@ namespace SandboxXnaShaders
 
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 600;
+            graphics.PreferMultiSampling = true;
         }
 
         protected override void Initialize()
