@@ -49,7 +49,7 @@ namespace SandboxXnaShaders
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             model = Content.Load<Model>("Models/Object");
-            effect = Content.Load<Effect>("Effects/Ambient");
+            effect = Content.Load<Effect>("Effects/Diffuse");
 
             CreateWorld();
         }
@@ -122,6 +122,9 @@ namespace SandboxXnaShaders
                     effect.Parameters["World"].SetValue(world * mesh.ParentBone.Transform);
                     effect.Parameters["View"].SetValue(view);
                     effect.Parameters["Projection"].SetValue(projection);
+
+                    Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
+                    effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
                 }
                 mesh.Draw();
             }
