@@ -5,3 +5,5 @@ Content\Effects\Specular.xnb
 Content\Effects\Textured.xnb
 Content\Textures\model_diff.xnb
 Content\Models\model_diff_0.xnb
+Content\Effects\NormalMap.xnb
+Content\Textures\model_norm.xnb
