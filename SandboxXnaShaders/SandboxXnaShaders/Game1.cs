@@ -21,6 +21,7 @@ namespace SandboxXnaShaders
 
         Model model;
         Effect effect;
+        Texture2D texture;
 
         Matrix world, view, projection;
         Vector3 cameraPosition;
@@ -54,7 +55,8 @@ namespace SandboxXnaShaders
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             model = Content.Load<Model>("Models/Object");
-            effect = Content.Load<Effect>("Effects/Specular");
+            effect = Content.Load<Effect>("Effects/Textured");
+            texture = Content.Load<Texture2D>("Textures/model_diff");
 
             CreateWorld();
         }
@@ -136,6 +138,7 @@ namespace SandboxXnaShaders
                     effect.Parameters["View"].SetValue(view);
                     effect.Parameters["Projection"].SetValue(projection);
                     effect.Parameters["ViewVector"].SetValue(viewVector);
+                    effect.Parameters["ModelTexture"].SetValue(texture);
 
                     Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
