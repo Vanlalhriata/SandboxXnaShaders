@@ -7,3 +7,6 @@ Content\Textures\model_diff.xnb
 Content\Models\model_diff_0.xnb
 Content\Effects\NormalMap.xnb
 Content\Textures\model_norm.xnb
+Content\Effects\Skybox.xnb
+Content\Skyboxes\Cube.xnb
+Content\Skyboxes\SkyBox.xnb

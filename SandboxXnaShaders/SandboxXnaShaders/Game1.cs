@@ -31,6 +31,10 @@ namespace SandboxXnaShaders
 
         Vector3 viewVector;
 
+        Skybox skybox;
+        RasterizerState skyBoxRasterizerState;
+        RasterizerState defaultRasterizerState;
+
         #endregion Fields
 
         #region Initialization
@@ -61,15 +65,19 @@ namespace SandboxXnaShaders
             normalMap = Content.Load<Texture2D>("Textures/model_norm");
 
             CreateWorld();
+
+            skybox = new Skybox("Skyboxes/Skybox", Content);
+            skyBoxRasterizerState = new RasterizerState() { CullMode = CullMode.CullClockwiseFace };
+            defaultRasterizerState = new RasterizerState();
         }
 
         private void CreateWorld()
         {
             world = Matrix.Identity;
 
-            cameraPosition = new Vector3(3, 5, 10);
-            lookAt = Vector3.Zero;
-            view = Matrix.CreateLookAt(cameraPosition, lookAt, Vector3.Up);
+            //cameraPosition = new Vector3(3, 5, 10);
+            //lookAt = Vector3.Zero;
+            //view = Matrix.CreateLookAt(cameraPosition, lookAt, Vector3.Up);
 
             projection = Matrix.CreatePerspectiveFieldOfView((float)Math.PI / 4, GraphicsDevice.Viewport.AspectRatio, 0.1f, 100f);
         }
@@ -94,8 +102,9 @@ namespace SandboxXnaShaders
 
             angle += 0.01f;
 
-            cameraPosition = 10 * new Vector3((float)Math.Sin(angle), 0.5f, (float)Math.Cos(angle));
-            view = Matrix.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.Up);
+            cameraPosition = 10 * new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle));
+            lookAt = Vector3.Zero;
+            view = Matrix.CreateLookAt(cameraPosition, lookAt, Vector3.Up);
 
             viewVector = lookAt - cameraPosition;
             viewVector.Normalize();
@@ -109,6 +118,10 @@ namespace SandboxXnaShaders
 
             //DrawModel(model, world, view, projection);
             DrawModelWithEffect(model, world, view, projection);
+
+            graphics.GraphicsDevice.RasterizerState = skyBoxRasterizerState;
+            skybox.Draw(view, projection, cameraPosition);
+            graphics.GraphicsDevice.RasterizerState = defaultRasterizerState;
 
             base.Draw(gameTime);
         }
