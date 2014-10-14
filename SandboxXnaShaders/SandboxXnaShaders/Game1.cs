@@ -35,6 +35,8 @@ namespace SandboxXnaShaders
         RasterizerState skyBoxRasterizerState;
         RasterizerState defaultRasterizerState;
 
+        TextureCube skyboxTexture;
+
         #endregion Fields
 
         #region Initialization
@@ -59,16 +61,16 @@ namespace SandboxXnaShaders
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            model = Content.Load<Model>("Models/Object");
-            effect = Content.Load<Effect>("Effects/NormalMap");
-            texture = Content.Load<Texture2D>("Textures/model_diff");
-            normalMap = Content.Load<Texture2D>("Textures/model_norm");
+            model = Content.Load<Model>("Models/UntexturedSphere");
+            effect = Content.Load<Effect>("Effects/Reflection");
 
             CreateWorld();
 
             skybox = new Skybox("Skyboxes/Skybox", Content);
             skyBoxRasterizerState = new RasterizerState() { CullMode = CullMode.CullClockwiseFace };
             defaultRasterizerState = new RasterizerState();
+
+            skyboxTexture = Content.Load<TextureCube>("Skyboxes/Skybox");
         }
 
         private void CreateWorld()
@@ -152,9 +154,8 @@ namespace SandboxXnaShaders
                     effect.Parameters["World"].SetValue(world * mesh.ParentBone.Transform);
                     effect.Parameters["View"].SetValue(view);
                     effect.Parameters["Projection"].SetValue(projection);
-                    effect.Parameters["ViewVector"].SetValue(viewVector);
-                    effect.Parameters["ModelTexture"].SetValue(texture);
-                    effect.Parameters["NormalMap"].SetValue(normalMap);
+                    effect.Parameters["SkyboxTexture"].SetValue(skyboxTexture);
+                    effect.Parameters["CameraPosition"].SetValue(this.cameraPosition);
 
                     Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
