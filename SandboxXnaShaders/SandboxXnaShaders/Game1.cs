@@ -22,7 +22,6 @@ namespace SandboxXnaShaders
         Model model;
         Effect effect;
         Texture2D texture;
-        Texture2D normalMap;
 
         Matrix world, view, projection;
         Vector3 cameraPosition;
@@ -61,16 +60,15 @@ namespace SandboxXnaShaders
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            model = Content.Load<Model>("Models/UntexturedSphere");
-            effect = Content.Load<Effect>("Effects/Reflection");
+            model = Content.Load<Model>("Models/Object");
+            effect = Content.Load<Effect>("Effects/Toon");
+            texture = Content.Load<Texture2D>("Textures/model_diff");
 
             CreateWorld();
 
             skybox = new Skybox("Skyboxes/Skybox", Content);
             skyBoxRasterizerState = new RasterizerState() { CullMode = CullMode.CullClockwiseFace };
             defaultRasterizerState = new RasterizerState();
-
-            skyboxTexture = Content.Load<TextureCube>("Skyboxes/Skybox");
         }
 
         private void CreateWorld()
@@ -154,8 +152,7 @@ namespace SandboxXnaShaders
                     effect.Parameters["World"].SetValue(world * mesh.ParentBone.Transform);
                     effect.Parameters["View"].SetValue(view);
                     effect.Parameters["Projection"].SetValue(projection);
-                    effect.Parameters["SkyboxTexture"].SetValue(skyboxTexture);
-                    effect.Parameters["CameraPosition"].SetValue(this.cameraPosition);
+                    effect.Parameters["Texture"].SetValue(texture);
 
                     Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
