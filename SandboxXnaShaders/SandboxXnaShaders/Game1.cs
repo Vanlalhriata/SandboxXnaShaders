@@ -61,7 +61,7 @@ namespace SandboxXnaShaders
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             model = Content.Load<Model>("Models/Object");
-            effect = Content.Load<Effect>("Effects/Toon");
+            effect = Content.Load<Effect>("Effects/Transparency");
             texture = Content.Load<Texture2D>("Textures/model_diff");
 
             CreateWorld();
@@ -152,7 +152,7 @@ namespace SandboxXnaShaders
                     effect.Parameters["World"].SetValue(world * mesh.ParentBone.Transform);
                     effect.Parameters["View"].SetValue(view);
                     effect.Parameters["Projection"].SetValue(projection);
-                    effect.Parameters["Texture"].SetValue(texture);
+                    effect.Parameters["ModelTexture"].SetValue(texture);
 
                     Matrix worldInverseTransposeMatrix = Matrix.Transpose(Matrix.Invert(mesh.ParentBone.Transform * world));
                     effect.Parameters["WorldInverseTranspose"].SetValue(worldInverseTransposeMatrix);
